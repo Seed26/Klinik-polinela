@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, Bell, CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, Clock3, PackagePlus, Pill, Plus, RefreshCw, Search, Trash2, UserPlus, Users, Volume2, X } from 'lucide-react'
+import { Activity, Bell, CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, Clock3, PackagePlus, Pill, Plus, RefreshCw, Search, Trash2, Users, Volume2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../services/api'
 import './admin.css'
@@ -662,7 +662,7 @@ export function AdminSchedulesPage() {
 
 export function AdminMedicinesPage() {
   const { data: medicines, loading, error, refresh } = useAdminData('/admin/medicines')
-  const { data: transactions, refresh: refreshTransactions } = useAdminData('/admin/medicine-transactions')
+  const { data: transactions, loading: loadingTransactions, refresh: refreshTransactions } = useAdminData('/admin/medicine-transactions')
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState('')
   const [selected, setSelected] = useState(null)
@@ -761,6 +761,57 @@ export function AdminMedicinesPage() {
           {!shown.length && <div className="empty-state">Tidak ada obat ditemukan.</div>}
         </div>
       )}
+
+      {/* RIWAYAT MUTASI STOK OBAT */}
+      <div className="surface-card admin-panel" style={{ marginTop: '24px' }}>
+        <div className="surface-heading" style={{ marginBottom: '16px' }}>
+          <div>
+            <span className="eyebrow">CATATAN FARMASI</span>
+            <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '2px 0 4px' }}>Riwayat Mutasi Stok Obat</h2>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '12px' }}>Daftar aktivitas stok masuk dan pengeluaran obat terkini.</p>
+          </div>
+          <PackagePlus size={20} />
+        </div>
+        {loadingTransactions ? (
+          <div className="loading-panel">Memuat riwayat transaksi stok…</div>
+        ) : (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Nama Obat</th>
+                  <th>Jenis Mutasi</th>
+                  <th>Jumlah</th>
+                  <th>Stok Sebelum</th>
+                  <th>Stok Sesudah</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(transactions) && transactions.slice(0, 15).map((tx) => (
+                  <tr key={tx.id}>
+                    <td><small>{new Date(tx.created_at).toLocaleString('id-ID')}</small></td>
+                    <td><strong>{tx.medicine?.name || 'Obat'}</strong></td>
+                    <td>
+                      <span className={`status-pill ${tx.type === 'masuk' ? 'status-done' : 'status-danger'}`}>
+                        {tx.type === 'masuk' ? 'Stok Masuk' : 'Stok Keluar'}
+                      </span>
+                    </td>
+                    <td><strong>{tx.type === 'masuk' ? `+${tx.quantity}` : `-${tx.quantity}`}</strong></td>
+                    <td>{tx.stock_before}</td>
+                    <td><strong>{tx.stock_after}</strong></td>
+                    <td><small style={{ color: '#64748b' }}>{tx.notes || '—'}</small></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {(!transactions || !transactions.length) && (
+              <div className="empty-state">Belum ada riwayat transaksi stok dicatat.</div>
+            )}
+          </div>
+        )}
+      </div>
 
       {modal === 'medicine' && (
         <Modal title={selected ? 'Edit Data Obat' : 'Tambah Obat Baru'} onClose={() => setModal('')}>
