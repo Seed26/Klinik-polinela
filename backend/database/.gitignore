@@ -1,0 +1,20 @@
+# Ignore local SQLite database and dumps, but keep migrations, factories, and safe dummy seeders
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.sql
+*.sql.gz
+*.dump
+*.bak
+*.backup
+!/migrations/
+!/migrations/**
+!/factories/
+!/factories/**
+!/seeders/
+!/seeders/**
+!/seeders/**/.gitignore
+!/migrations/**/.gitignore
+!/factories/**/.gitignore
+!.gitignore
