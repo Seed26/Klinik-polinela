@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
-import { Activity, ArrowDown, ArrowRight, CalendarDays, CheckCircle2, Clock3, HeartPulse, Info, MapPin, Menu, Pill, ShieldPlus, Stethoscope, UsersRound, X } from 'lucide-react'
+import { Activity, ArrowDown, ArrowRight, CalendarDays, CheckCircle2, Clock3, HeartPulse, Info, ListOrdered, MapPin, Menu, Pill, ShieldPlus, Stethoscope, X } from 'lucide-react'
 import clinicLogo from './assets/logo-klinik.png'
 import heroIllustration from './assets/polinela-smartphone-mockup.png'
 import api from './services/api'
@@ -10,6 +10,7 @@ import DashboardLayout from './components/layout/DashboardLayout'
 import LoginPage from './pages/auth/LoginPage'
 import DashboardPage from './pages/common/DashboardPage'
 import { AdminDashboardPage, AdminMedicinesPage, AdminNotificationsPage, AdminQueuesPage, AdminSchedulesPage } from './pages/admin/AdminPages'
+import MapSection from './components/MapSection'
 import './landing.css'
 
 const benefits = [
@@ -20,10 +21,10 @@ const benefits = [
 ]
 
 const services = [
-  { icon: Stethoscope, title: 'Konsultasi Dokter', description: 'Informasi mengenai pelayanan konsultasi dokter di Klinik Polinela.', href: '#jadwal' },
-  { icon: HeartPulse, title: 'Pemeriksaan Kesehatan', description: 'Pelayanan pemeriksaan kesehatan oleh tenaga kesehatan klinik.', href: '#tentang' },
-  { icon: Pill, title: 'Informasi Obat', description: 'Informasi obat klinik dikelola oleh petugas melalui sistem.', href: '#informasi' },
-  { icon: UsersRound, title: 'Layanan Psikologi', description: 'Hubungi pihak klinik untuk memastikan ketersediaan layanan ini.', href: '#lokasi' },
+  { icon: Stethoscope, title: 'Konsultasi Dokter', description: 'Informasi mengenai pelayanan konsultasi dokter di Klinik Polinela.' },
+  { icon: HeartPulse, title: 'Pemeriksaan Kesehatan', description: 'Pelayanan pemeriksaan kesehatan oleh tenaga kesehatan klinik.' },
+  { icon: Pill, title: 'Informasi Obat', description: 'Informasi obat klinik dikelola oleh petugas melalui sistem.' },
+  { icon: ListOrdered, title: 'Antrean Realtime', description: 'Pantau informasi nomor antrean dan perkembangan pelayanan Klinik Polinela secara langsung.' },
 ]
 
 const reasons = [
@@ -162,7 +163,7 @@ function LandingPage() {
 
     <section className="landing-section landing-about" id="tentang"><div className="landing-section-intro"><span className="landing-eyebrow">TENTANG KLINIK</span><h2>Mendampingi civitas Polinela tetap sehat.</h2></div><p>Klinik Politeknik Negeri Lampung menyediakan informasi pelayanan kesehatan, jadwal dokter, dan pengelolaan layanan klinik bagi mahasiswa serta seluruh civitas akademika. Informasi pada halaman ini disajikan sesuai data yang tersedia.</p></section>
 
-    <section className="landing-section landing-services" id="layanan"><div className="landing-section-heading"><div><span className="landing-eyebrow">DUKUNGAN KESEHATAN</span><h2>Layanan Kesehatan Kami</h2><p>Temukan informasi layanan kesehatan yang tersedia di Klinik Polinela.</p></div><a className="landing-section-link" href="#lokasi">Informasi klinik <ArrowRight size={16} /></a></div><div className="landing-service-grid">{services.map(({ icon: Icon, title, description, href }, index) => <article className="landing-service-card" key={title}><div className={`landing-service-icon service-tone-${index + 1}`}><Icon size={23} strokeWidth={1.8} /></div><span className="landing-card-index">0{index + 1}</span><h3>{title}</h3><p>{description}</p><a href={href}>Pelajari Selengkapnya <ArrowRight size={15} /></a></article>)}</div></section>
+    <section className="landing-section landing-services" id="layanan"><div className="landing-section-heading"><div><span className="landing-eyebrow">DUKUNGAN KESEHATAN</span><h2>Layanan Kesehatan Kami</h2><p>Temukan informasi layanan kesehatan yang tersedia di Klinik Polinela.</p></div></div><div className="landing-service-grid">{services.map(({ icon: Icon, title, description }, index) => <article className="landing-service-card" key={title}><div className={`landing-service-icon service-tone-${index + 1}`}><Icon size={23} strokeWidth={1.8} /></div><span className="landing-card-index">0{index + 1}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
 
     <section className="landing-queue-banner" id="informasi"><div className="landing-queue-mark"><img src={clinicLogo} alt="" /></div><div className="landing-queue-copy"><span className="landing-eyebrow">AKSES INFORMASI KLINIK</span><h2>Lebih Mudah Mengakses Layanan Kesehatan</h2><p>Lihat informasi layanan dan jadwal Klinik Polinela dengan lebih praktis.</p></div><a className="landing-cta landing-cta-light" href="#antrean">Lihat Antrean <ArrowRight size={17} /></a><div className="landing-queue-decoration" aria-hidden="true"><HeartPulse /><span /><span /></div></section>
 
@@ -172,7 +173,27 @@ function LandingPage() {
 
     <section className="landing-section landing-reasons"><div className="landing-section-heading"><div><span className="landing-eyebrow">MENGAPA KLINIK POLINELA?</span><h2>Informasi yang membantu Anda.</h2></div></div><div className="landing-reason-grid">{reasons.map(({ icon: Icon, title, description }) => <article key={title}><span className="landing-reason-icon"><Icon size={20} /></span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
 
-    <section className="landing-location" id="lokasi"><div className="landing-location-copy"><span className="landing-eyebrow">KUNJUNGI KAMI</span><h2>Temukan Klinik Polinela</h2><p>Lokasi klinik berada di lingkungan Politeknik Negeri Lampung. Silakan hubungi pihak kampus atau petugas klinik untuk petunjuk lokasi dan informasi kontak terbaru.</p><div className="landing-location-facts"><span><MapPin size={18} /><span><strong>Klinik Politeknik Negeri Lampung</strong><small>Politeknik Negeri Lampung</small></span></span><span><Clock3 size={18} /><span><strong>Jam operasional</strong><small>Konfirmasi kepada pihak klinik untuk informasi terbaru</small></span></span></div><a className="landing-location-button" href="https://polinela.ac.id/" target="_blank" rel="noreferrer">Lihat Lokasi Kampus <ArrowRight size={16} /></a></div><div className="landing-map-placeholder"><div className="landing-map-grid"/><span className="landing-map-pin"><MapPin size={25} /></span><div className="landing-map-card"><img src={clinicLogo} alt="" /><span><strong>Klinik Polinela</strong><small>Politeknik Negeri Lampung</small></span></div><span className="landing-map-note">Peta lokasi kampus</span></div></section>
+    <section className="landing-location" id="lokasi">
+      <div className="landing-location-copy">
+        <span className="landing-eyebrow">KUNJUNGI KAMI</span>
+        <h2>Temukan Klinik Polinela</h2>
+        <p>Lokasi klinik berada di lingkungan Politeknik Negeri Lampung. Jl. Soekarno-Hatta No. 10, Rajabasa Raya, Kecamatan Rajabasa, Kota Bandar Lampung, Lampung 35144.</p>
+        <div className="landing-location-facts">
+          <span>
+            <MapPin size={18} />
+            <span><strong>Klinik Politeknik Negeri Lampung</strong><small>Politeknik Negeri Lampung</small></span>
+          </span>
+          <span>
+            <Clock3 size={18} />
+            <span><strong>Jam operasional</strong><small>Konfirmasi kepada pihak klinik untuk informasi terbaru</small></span>
+          </span>
+        </div>
+        <a className="landing-location-button" href="https://www.google.com/maps/place/Politeknik+Negeri+Lampung/@-5.3585267,105.2302713,17z/data=!3m1!4b1!4m5!3m4!1s0x2e40c54fa0db33eb:0xe69b7788ca97353a!8m2!3d-5.358532!4d105.23246" target="_blank" rel="noreferrer">
+          Lihat Lokasi Kampus <ArrowRight size={16} />
+        </a>
+      </div>
+      <MapSection />
+    </section>
 
     <footer className="landing-footer"><div className="landing-footer-main"><div className="landing-footer-brand"><Link className="landing-footer-logo" to="/"><img src={clinicLogo} alt="Logo Klinik Polinela" /><span><strong>KLINIK POLINELA</strong><small>Politeknik Negeri Lampung</small></span></Link><p>Mendukung kesehatan mahasiswa dan seluruh civitas akademika Politeknik Negeri Lampung.</p></div><div className="landing-footer-column"><strong>Navigasi Cepat</strong><a href="#beranda">Beranda</a><a href="#tentang">Tentang Klinik</a><a href="#layanan">Layanan</a><a href="#jadwal">Jadwal Dokter</a></div><div className="landing-footer-column"><strong>Informasi Layanan</strong><a href="#informasi">Antrean Klinik</a><a href="#jadwal">Informasi Dokter</a><a href="#lokasi">Lokasi Klinik</a><Link to="/login">Login Admin & Dokter</Link></div><div className="landing-footer-column landing-footer-contact"><strong>Lokasi & Waktu</strong><span><MapPin size={16} /> Politeknik Negeri Lampung</span><span><Clock3 size={16} /> Hubungi klinik untuk jam terbaru</span><a href="https://polinela.ac.id/" target="_blank" rel="noreferrer">Situs Polinela <ArrowRight size={14} /></a></div></div><div className="landing-footer-bottom"><span>© 2026 Klinik Politeknik Negeri Lampung</span><span>Sehat untuk terus berkarya.</span></div></footer>
   </main>
