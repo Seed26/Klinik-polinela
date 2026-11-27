@@ -96,7 +96,14 @@ export default function DashboardLayout() {
             {role === 'admin' ? 'Portal Admin' : role === 'doctor' ? 'Portal Dokter' : 'Portal Pasien'} &gt; <strong>Beranda</strong>
           </div>
           <div className="topbar-right-area">
-            <div className="notification-bell-wrap" title="Notifikasi">
+            <div 
+              className="notification-bell-wrap" 
+              title="Notifikasi"
+              style={{ cursor: role === 'admin' ? 'pointer' : 'default' }}
+              onClick={() => {
+                if (role === 'admin') navigate('/admin/notifications')
+              }}
+            >
               <Bell size={20} />
               <span className="notification-badge-dot" />
             </div>

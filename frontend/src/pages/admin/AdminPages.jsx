@@ -305,29 +305,12 @@ export function AdminDashboardPage() {
                 )
               })
             ) : (
-              <>
-                <div className="medicine-row-item row-normal">
-                  <div className="medicine-row-info">
-                    <strong>Paracetamol 500 mg</strong>
-                    <span>320 / 50 strip</span>
-                  </div>
-                  <span className="medicine-badge-safe">Aman</span>
+              <div className="medicine-row-item row-normal">
+                <div className="medicine-row-info">
+                  <strong>Belum ada data obat.</strong>
+                  <span>Tambahkan obat melalui menu Manajemen Obat.</span>
                 </div>
-                <div className="medicine-row-item row-normal">
-                  <div className="medicine-row-info">
-                    <strong>Amoxicillin 500 mg</strong>
-                    <span className="text-red">14 / 30 strip</span>
-                  </div>
-                  <span className="medicine-badge-warning">Menipis</span>
-                </div>
-                <div className="medicine-row-item row-danger">
-                  <div className="medicine-row-info">
-                    <strong className="text-red">Cetirizine 10 mg</strong>
-                    <span className="text-red">0 / 25 strip</span>
-                  </div>
-                  <span className="medicine-badge-danger">Habis</span>
-                </div>
-              </>
+              </div>
             )}
           </div>
           <Link className="btn-manage-medicines" to="/admin/medicines">
@@ -354,9 +337,9 @@ export function AdminDashboardPage() {
         <div className="footer-bottom-row">
           <span>&copy; 2025 Klinik Polinela Management System. Politeknik Negeri Lampung.</span>
           <div className="footer-links-group">
-            <a href="#">Kebijakan Privasi Medis</a>
-            <a href="#">Panduan Rawat Jalan</a>
-            <a href="#">Kontak Tim Media</a>
+            <span>Kebijakan Privasi Medis</span>
+            <span>Panduan Rawat Jalan</span>
+            <span>Kontak Tim Media</span>
           </div>
         </div>
       </footer>
@@ -444,6 +427,30 @@ export function AdminQueuesPage() {
     }
   }
 
+  const exportQueues = () => {
+    const headers = ['No. Antrean', 'Nama Pasien', 'NPM/Identitas', 'Program Studi', 'Layanan', 'Tanggal', 'Jam', 'Status']
+    const csvContent = [
+      headers.join(','),
+      ...allRows.map(r => [
+        `"${r.queue_number}"`,
+        `"${r.patient_profile?.user?.name || 'Pasien'}"`,
+        `"${r.patient_profile?.identifier_number || '-'}"`,
+        `"${r.patient_profile?.study_program || '-'}"`,
+        `"${r.doctor_profile?.clinic_type || 'Umum'}"`,
+        `"${r.visit_date}"`,
+        `"${r.estimated_time || '-'}"`,
+        `"${r.status}"`
+      ].join(','))
+    ].join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `Rekap_Antrean_${date}.csv`
+    link.click()
+    toast.success('Rekap antrean berhasil diunduh.')
+  }
+
   const kpi = {
     permintaan: allRows.filter(r => r.status === 'Menunggu').length,
     hariIni: allRows.length,
@@ -460,7 +467,7 @@ export function AdminQueuesPage() {
           <p>Kelola pendaftaran mandiri dari aplikasi pengguna, konfirmasi nomor antrean resmi dengan aman, dan pantau antrean aktif secara real-time.</p>
         </div>
         {(activeTab === 'permintaan' || activeTab === 'aktif') && (
-          <button className="btn-download-v2">
+          <button className="btn-download-v2" onClick={exportQueues}>
             <Download size={18} /> Download Rekap Harian (XLSX)
           </button>
         )}
@@ -699,10 +706,10 @@ export function AdminQueuesPage() {
                   </div>
                 </div>
                 <div className="header-right">
-                  <button className="btn-month-v2">
+                  <button className="btn-month-v2" onClick={() => toast('Fitur pilih bulan dalam pengembangan.')}>
                     <Calendar size={16} /> {new Date().toLocaleString('id-ID', { month: 'long', year: 'numeric' })} <ChevronDown size={16} />
                   </button>
-                  <button className="btn-download-white-v2">
+                  <button className="btn-download-white-v2" onClick={exportQueues}>
                     <Download size={16} /> Download Rekap Harian (XLSX)
                   </button>
                 </div>
@@ -985,7 +992,7 @@ export function AdminMedicinesPage() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `Rekap_Obat_${new Date().toISOString().slice(0, 10)}.xlsx`
+    link.download = `Rekap_Obat_${new Date().toISOString().slice(0, 10)}.csv`
     link.click()
   }
 
@@ -1501,7 +1508,19 @@ export function AdminNotificationsPage() {
   const filtered = notifications.filter((item) => {
     const matchCategory = category === 'Semua' || item.category === category
     const matchSearch = `${item.title} ${item.message}`.toLowerCase().includes(search.toLowerCase())
-    return matchCategory && matchSearch
+    
+    let matchPeriod = true
+    const itemDate = new Date(item.created_at)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    if (period === 'Hari Ini') {
+      const itemDay = new Date(itemDate)
+      itemDay.setHours(0, 0, 0, 0)
+      matchPeriod = itemDay.getTime() === today.getTime()
+    }
+    
+    return matchCategory && matchSearch && matchPeriod
   })
 
   const resetForm = () => {
