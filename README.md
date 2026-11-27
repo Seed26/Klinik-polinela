@@ -101,4 +101,4 @@ Dokumentasi lanjutan: `docs/ARSITEKTUR.md`, `docs/ERD.md`, dan `docs/API-DOCUMEN
 - `/admin/*` — portal Admin (dilindungi role).
 - `/doctor/*` — portal Dokter (dilindungi role).
 - `/patient/*` — diarahkan ke Landing Page; portal pasien web tidak tersedia.
-"# Klinik-polinela" 
+"# Klinik-polinela"
