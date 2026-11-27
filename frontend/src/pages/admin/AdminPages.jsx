@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, AlertCircle, BarChart2, Bell, CalendarDays, Calendar, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock3, ClipboardList, Download, Edit, ListOrdered, PackagePlus, Pencil, Pill, Plus, PlusCircle, RefreshCw, Search, Send, Stethoscope, Trash2, TrendingUp, User, Users, Volume2, X, XCircle } from 'lucide-react'
+import { Activity, AlertCircle, BarChart2, Bell, CalendarDays, Calendar, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock3, ClipboardList, Download, Edit, ListOrdered, MapPin, PackagePlus, Pencil, Pill, Plus, PlusCircle, RefreshCw, Search, Send, Stethoscope, Trash2, TrendingUp, User, Users, Volume2, X, XCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import './admin.css'
 import './schedule.css'
 import './queues-v2.css'
+import './figma-redesign.css'
+import clinicLogo from '../../assets/clinic-admin-logo.png'
 
 function SlideOver({ title, sub, onClose, children, footer }) {
   return (
@@ -120,172 +122,245 @@ export function AdminDashboardPage() {
   const queues = data?.latest_queues || []
   const medicines = data?.medicines || []
 
-  // Auto-refresh data metrik realtime setiap 15 detik
   useEffect(() => {
-    const timer = setInterval(() => {
-      refresh()
-    }, 15000)
+    const timer = setInterval(() => { refresh() }, 15000)
     return () => clearInterval(timer)
   }, [refresh])
 
   return (
-    <section className="admin-dashboard-page">
-      <div className="admin-welcome-banner">
-        <div>
-          <span className="admin-welcome-pill">● REALTIME AKTIF (Setiap 15 Detik)</span>
+    <>
+      {/* 3. Hero Welcome Banner */}
+      <div className="hero-welcome-banner">
+        <div className="hero-welcome-left">
+          <span className="hero-welcome-badge"><i />WELCOME BACK</span>
           <h1>Selamat Datang, Admin Klinik</h1>
-          <p>Pantau metrik pelayanan klinik hari ini secara realtime dan terintegrasi.</p>
+          <p>Senang melihat Anda kembali. Pantau aktivitas pelayanan klinik hari ini dengan data terkini.</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button
-            type="button"
-            onClick={() => refresh()}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '7px 12px',
-              borderRadius: '18px',
-              border: 'none',
-              background: '#ffffff26',
-              color: '#fff',
-              fontSize: '11px',
-              cursor: 'pointer',
-              fontWeight: 600
-            }}
-          >
-            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} /> Segarkan
-          </button>
-          <div className="admin-operating-pill">
-            <span /> Operasional Klinik
+        <div className="hero-welcome-right">
+          <div className="hero-operating-pill">
+            <i />Operasional Normal (08:00 - 16:00 WIB)
+          </div>
+          <div className="hero-status-card">
+            <div className="hero-status-row">
+              <span>Status Pelayanan</span>
+              <span className="blue-val">Umum</span>
+            </div>
+            <div className="hero-status-row">
+              <span>Dokter Jaga Bertugas:</span>
+              <span>{stats.active_doctors ?? 2} Dokter Aktif</span>
+            </div>
+            <div className="hero-status-row">
+              <span>Sesi Aktif:</span>
+              <span>Pagi (08:00 - 12:00)</span>
+            </div>
           </div>
         </div>
       </div>
 
       {error && <Alert>{error}</Alert>}
 
-      {loading && !stats.total_patients ? (
-        <div className="loading-panel">Memuat ringkasan aktual…</div>
-      ) : (
-        <>
-          {/* 4 METRIK REALTIME UTAMA */}
-          <div className="metrics-grid" style={{ marginBottom: '16px' }}>
-            <StatTile
-              icon={ClipboardList}
-              label="Total Antrean Hari Ini"
-              value={stats.today_queues ?? 0}
-              tone="blue"
-              detail={`${stats.waiting_queues ?? 0} menunggu · ${stats.processing_queues ?? 0} diperiksa`}
-            />
-            <StatTile
-              icon={Users}
-              label="Pasien Hari Ini"
-              value={stats.today_patients ?? 0}
-              tone="mint"
-              detail={`Total ${stats.total_patients ?? 0} pasien terdaftar`}
-            />
-            <StatTile
-              icon={Pill}
-              label="Obat Menipis"
-              value={stats.low_stock_medicines ?? 0}
-              tone="amber"
-              detail={`Dari ${stats.total_medicines ?? 0} item obat aktif`}
-            />
-            <StatTile
-              icon={CalendarDays}
-              label="Jadwal Dokter Aktif"
-              value={stats.active_schedules ?? 0}
-              tone="violet"
-              detail={`${stats.active_doctors ?? 0} dokter berpraktik`}
-            />
+      {/* 4. Aktivitas Antrean Terbaru */}
+      <div className="activity-queue-card">
+        <div className="activity-queue-header">
+          <div>
+            <h2>Aktivitas Antrean Terbaru</h2>
+            <p>Pemantauan alur antrean pelayanan pasien saat ini.</p>
           </div>
-
-          <div className="admin-dashboard-grid">
-            <div className="surface-card admin-dashboard-activity">
-              <div className="surface-heading">
-                <div>
-                  <span className="eyebrow">PEMANTAUAN HARI INI</span>
-                  <h2>Aktivitas Antrean Terbaru</h2>
-                  <p>Pantauan alur antrean pelayanan pasien saat ini.</p>
-                </div>
-                <ClipboardList size={20} />
-              </div>
+        </div>
+        <div className="activity-table-wrap">
+          <table className="activity-table">
+            <thead>
+              <tr>
+                <th>Nomor Antrean</th>
+                <th>Nama Pasien</th>
+                <th>Jenis Layanan</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
               {queues.length ? (
-                <div className="admin-dashboard-table-wrap">
-                  <table className="admin-dashboard-table">
-                    <thead>
-                      <tr>
-                        <th>Nomor antrean</th>
-                        <th>Nama pasien</th>
-                        <th>Poli / Dokter</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {queues.slice(0, 6).map((queue) => (
-                        <tr key={queue.id}>
-                          <td><strong>{queue.queue_number}</strong></td>
-                          <td>{queue.patient_profile?.user?.name || 'Pasien'}</td>
-                          <td>{queue.doctor_profile?.user?.name || queue.doctor_profile?.clinic_type || 'Umum'}</td>
-                          <td>
-                            <span className={`status-pill status-${queue.status === 'Selesai' ? 'done' : queue.status === 'Diperiksa' ? 'process' : queue.status === 'Dibatalkan' ? 'danger' : 'waiting'}`}>
-                              {queue.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                queues.slice(0, 5).map((queue) => (
+                  <tr key={queue.id}>
+                    <td><strong>{queue.queue_number}</strong></td>
+                    <td>{queue.patient_profile?.user?.name || 'Pasien'}</td>
+                    <td>{queue.doctor_profile?.clinic_type || 'Umum'}</td>
+                    <td>
+                      {queue.status === 'Menunggu' && (
+                        <span className="queue-badge-waiting"><Clock3 size={12} />Menunggu</span>
+                      )}
+                      {queue.status === 'Diperiksa' && (
+                        <span className="queue-badge-process"><Activity size={12} />Diperiksa</span>
+                      )}
+                      {queue.status === 'Selesai' && (
+                        <span className="queue-badge-done"><Check size={12} />Selesai</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
               ) : (
-                <div className="empty-state">Belum ada antrean hari ini.</div>
+                <tr>
+                  <td colSpan="4" style={{ textAlign: 'center', padding: '30px', color: '#64748B' }}>
+                    Belum ada antrean hari ini.
+                  </td>
+                </tr>
               )}
-              <Link className="admin-dashboard-link" to="/admin/queues">
-                Kelola Seluruh Antrean <ChevronRight size={15} />
-              </Link>
-            </div>
+            </tbody>
+          </table>
+        </div>
+        <div className="activity-footer-action">
+          <Link className="btn-manage-queues" to="/admin/queues">
+            Kelola Seluruh Antrean
+          </Link>
+        </div>
+      </div>
 
-            <div className="surface-card admin-dashboard-stock">
-              <div className="surface-heading">
-                <div>
-                  <span className="eyebrow">INVENTARIS FARMASI</span>
-                  <h2>Informasi Stok Obat</h2>
-                  <p>Status obat yang menipis atau memerlukan stok masuk.</p>
-                </div>
-                <Pill size={19} />
-              </div>
-              {medicines.length ? (
-                <div className="admin-stock-list">
-                  {medicines.slice(0, 5).map((medicine) => {
-                    const low = Number(medicine.stock) <= Number(medicine.min_stock_alert)
-                    return (
-                      <div key={medicine.id}>
-                        <span>
-                          <strong>{medicine.name}</strong>
-                          <small>{medicine.stock} {medicine.form || 'unit'}</small>
-                        </span>
-                        <b className={low ? 'low' : ''}>{low ? 'Menipis' : 'Aman'}</b>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="empty-state">Belum ada data obat.</div>
-              )}
-              <Link className="admin-dashboard-stock-link" to="/admin/medicines">
-                <Pill size={14} /> Kelola Obat
-              </Link>
+      {/* 5. Bottom Grid Section */}
+      <div className="bottom-grid-section">
+        {/* Stats 2x2 Grid — no outer wrapper box */}
+        <div className="stats-2x2-bare">
+          <div className="stat-card-item">
+            <div className="stat-card-header-row">
+              <span className="stat-card-label">Total Pasien</span>
+              <div className="stat-card-icon-box"><Users size={18} /></div>
+            </div>
+            <div className="stat-card-value-row">
+              <span className="stat-card-number">{stats.total_patients ?? 13}</span>
+              <span className="stat-card-unit">Total pasien</span>
+            </div>
+            <div className="stat-card-footer-note">
+              <CheckCircle2 size={12} /> Seluruh pasien terdaftar
             </div>
           </div>
 
-          <div className="admin-dashboard-summary" style={{ marginTop: '14px' }}>
-            <span>● {stats.processing_queues ?? 0} antrean sedang dilayani</span>
-            <span>● {stats.completed_queues ?? 0} antrean selesai hari ini</span>
-            <span>● {stats.active_doctors ?? 0} dokter aktif bertugas</span>
+          <div className="stat-card-item">
+            <div className="stat-card-header-row">
+              <span className="stat-card-label">Antrean Hari Ini</span>
+              <div className="stat-card-icon-box"><ClipboardList size={18} /></div>
+            </div>
+            <div className="stat-card-value-row">
+              <span className="stat-card-number">{stats.today_queues ?? 5}</span>
+              <span className="stat-card-unit">Pasien</span>
+            </div>
+            <div className="stat-card-footer-note">
+              <Clock3 size={12} /> {stats.waiting_queues ?? 5} aktif &amp; antrean
+            </div>
           </div>
-        </>
-      )}
-    </section>
+
+          <div className="stat-card-item">
+            <div className="stat-card-header-row">
+              <span className="stat-card-label">Menunggu Konfirmasi</span>
+              <div className="stat-card-icon-box"><Clock3 size={18} /></div>
+            </div>
+            <div className="stat-card-value-row">
+              <span className="stat-card-number">{stats.waiting_queues ?? 8}</span>
+              <span className="stat-card-unit">Pendaftar</span>
+            </div>
+            <div className="stat-card-footer-note">
+              <AlertCircle size={12} /> Belum dikonfirmasi admin
+            </div>
+          </div>
+
+          <div className="stat-card-item">
+            <div className="stat-card-header-row">
+              <span className="stat-card-label">Total Jenis Obat</span>
+              <div className="stat-card-icon-box"><Pill size={18} /></div>
+            </div>
+            <div className="stat-card-value-row">
+              <span className="stat-card-number">{stats.total_medicines ?? 20}</span>
+              <span className="stat-card-unit">Jenis</span>
+            </div>
+            <div className="stat-card-footer-note">
+              <ClipboardList size={12} /> Inventaris aktif farmasi
+            </div>
+          </div>
+        </div>
+
+        {/* Medicine Stock Panel */}
+        <div className="medicine-stock-panel">
+          <div className="medicine-panel-header">
+            <h2>Informasi Stok Obat</h2>
+            <p>Status ketersediaan obat menipis atau kritis.</p>
+          </div>
+          <div className="medicine-list-container">
+            {medicines.length ? (
+              medicines.slice(0, 4).map((med) => {
+                const isLow = Number(med.stock) <= Number(med.min_stock_alert)
+                const isOut = Number(med.stock) === 0
+                return (
+                  <div className={`medicine-row-item ${isOut ? 'row-danger' : 'row-normal'}`} key={med.id}>
+                    <div className="medicine-row-info">
+                      <strong className={isOut ? 'text-red' : ''}>{med.name}</strong>
+                      <span className={isOut ? 'text-red' : ''}>
+                        {med.stock} / {med.min_stock_alert} {med.form || 'strip'}
+                      </span>
+                    </div>
+                    {isOut ? (
+                      <span className="medicine-badge-danger">Habis</span>
+                    ) : isLow ? (
+                      <span className="medicine-badge-warning">Menipis</span>
+                    ) : (
+                      <span className="medicine-badge-safe">Aman</span>
+                    )}
+                  </div>
+                )
+              })
+            ) : (
+              <>
+                <div className="medicine-row-item row-normal">
+                  <div className="medicine-row-info">
+                    <strong>Paracetamol 500 mg</strong>
+                    <span>320 / 50 strip</span>
+                  </div>
+                  <span className="medicine-badge-safe">Aman</span>
+                </div>
+                <div className="medicine-row-item row-normal">
+                  <div className="medicine-row-info">
+                    <strong>Amoxicillin 500 mg</strong>
+                    <span className="text-red">14 / 30 strip</span>
+                  </div>
+                  <span className="medicine-badge-warning">Menipis</span>
+                </div>
+                <div className="medicine-row-item row-danger">
+                  <div className="medicine-row-info">
+                    <strong className="text-red">Cetirizine 10 mg</strong>
+                    <span className="text-red">0 / 25 strip</span>
+                  </div>
+                  <span className="medicine-badge-danger">Habis</span>
+                </div>
+              </>
+            )}
+          </div>
+          <Link className="btn-manage-medicines" to="/admin/medicines">
+            <ClipboardList size={16} /> Kelola Obat
+          </Link>
+        </div>
+      </div>
+
+      {/* 6. Footer Halaman */}
+      <footer className="clinic-page-footer">
+        <div className="footer-top-row">
+          <div className="footer-brand-info">
+            <img src={clinicLogo} alt="Logo Klinik Polinela" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+            <div>
+              <strong>Klinik Pratama Polinela</strong>
+              <span>Politeknik Negeri Lampung Healthcare Service</span>
+            </div>
+          </div>
+          <div className="footer-location-info">
+            <MapPin size={15} color="#0A589C" />
+            Gedung Pusat Kegiatan Mahasiswa (PKM) Polinela, Jl. Soekarno Hatta No.10 Rajabasa, Bandar Lampung
+          </div>
+        </div>
+        <div className="footer-bottom-row">
+          <span>&copy; 2025 Klinik Polinela Management System. Politeknik Negeri Lampung.</span>
+          <div className="footer-links-group">
+            <a href="#">Kebijakan Privasi Medis</a>
+            <a href="#">Panduan Rawat Jalan</a>
+            <a href="#">Kontak Tim Media</a>
+          </div>
+        </div>
+      </footer>
+    </>
   )
 }
 

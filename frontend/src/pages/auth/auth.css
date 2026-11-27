@@ -1,0 +1,272 @@
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+}
+
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 48px 40px;
+  background: #fff;
+  overflow-y: auto;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.brand-mark {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.auth-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.auth-brand > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-brand strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #17324d;
+  letter-spacing: 0.3px;
+}
+
+.auth-brand span {
+  font-size: 11px;
+  color: #8293a5;
+  margin-top: 2px;
+}
+
+.auth-copy {
+  margin-bottom: 24px;
+}
+
+.auth-copy h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #17324d;
+  margin: 0 0 8px;
+}
+
+.auth-copy p {
+  font-size: 14px;
+  color: #8293a5;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.auth-form label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #17324d;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #dce7f1;
+  border-radius: 8px;
+  background: #fff;
+  transition: 0.2s;
+}
+
+.input-wrap:focus-within {
+  border-color: #0878c9;
+  box-shadow: 0 0 0 3px rgba(8, 120, 201, 0.1);
+}
+
+.input-wrap svg {
+  color: #8293a5;
+  flex-shrink: 0;
+}
+
+.input-wrap input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #17324d;
+  outline: none;
+  font-family: inherit;
+}
+
+.input-wrap input::placeholder {
+  color: #cbd5e0;
+}
+
+.primary-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.auth-submit {
+  background: #0878c9;
+  color: #fff;
+  margin-top: 8px;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #0060a9;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-forgot {
+  font-size: 12px;
+  color: #0878c9;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.auth-forgot:hover {
+  color: #0060a9;
+  text-decoration: underline;
+}
+
+.auth-aside {
+  position: relative;
+  background: linear-gradient(135deg, #0878c9 0%, #0060a9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  color: #fff;
+  overflow: hidden;
+}
+
+.aside-orb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.orb-a {
+  width: 300px;
+  height: 300px;
+  background: #fff;
+  top: -100px;
+  right: -100px;
+}
+
+.orb-b {
+  width: 250px;
+  height: 250px;
+  background: #fff;
+  bottom: -80px;
+  left: -80px;
+}
+
+.aside-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.aside-content span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
+
+.aside-content h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+
+.aside-content p {
+  font-size: 15px;
+  max-width: 320px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+@media (max-width: 1024px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-aside {
+    display: none;
+  }
+
+  .auth-panel {
+    padding: 40px 32px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-panel {
+    padding: 32px 20px;
+  }
+
+  .auth-copy h1 {
+    font-size: 24px;
+  }
+
+  .auth-brand {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .brand-mark {
+    width: 48px;
+    height: 48px;
+  }
+
+  .auth-form {
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .input-wrap {
+    padding: 10px 12px;
+  }
+}

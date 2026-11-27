@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import '../auth/auth.css'
 import { ArrowRight, Eye, EyeOff, LockKeyhole, LogOut, Mail, Shield, Stethoscope, UserCheck } from 'lucide-react'
 import clinicLogo from '../../assets/logo-klinik.png'
 import { Link, useNavigate } from 'react-router-dom'
